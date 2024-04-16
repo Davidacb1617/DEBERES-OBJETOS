@@ -1,24 +1,55 @@
-# Solución al problema Resistor-Color
+# Solución al problema Resistor Color Trio
 
-## Problema
+Este ejercicio implica la creación de una función que decodifica los valores de resistencia de un resistor de tres bandas, dadas las tres bandas de colores como entrada.
 
-1. **Definir los colores y sus valores asociados:** El primer paso es definir una lista de colores y sus valores asociados. En el caso de este problema, se utilizan los colores estándar de las bandas de resistencia, que representan dígitos numéricos del 0 al 9.
-   
-2. **Mapeo de colores a valores numéricos:** Dado un color de banda de resistencia, el siguiente paso es mapear ese color a su valor numérico correspondiente. Este mapeo es estático y se puede realizar mediante una estructura de datos como un diccionario o un mapa.
-   
-3. **Cálculo del valor de resistencia:** Una vez que tenemos los valores numéricos asociados a cada color de banda, podemos calcular el valor de resistencia total utilizando la fórmula adecuada. Esto implica la manipulación de los dígitos numéricos y su posición según la banda de resistencia.
+## Enfoque
+
+1. **Definición de colores y valores de resistencia**: Se define un enum llamado `ResistorValues` que asigna valores numéricos a los colores de las bandas de un resistor.
+
+2. **Decodificación de valores**: La función `decodedResistorValue` toma un array de tres colores como entrada y devuelve la resistencia en ohms como una cadena de texto. Se calcula el valor principal concatenando los valores correspondientes a los dos primeros colores y luego se multiplica por la cantidad de ceros determinada por el tercer color. Luego, dependiendo del valor resultante, se elige el prefijo correcto para indicar la magnitud del valor en ohms (ohms, kiloohms, megaohms o gigaohms).
 
 ## Solución
 
-Aquí hay una posible solución en TypeScript:
+Aquí se muestra una posible solución en TypeScript:
 
 ```typescript
-export const COLORS = ['black', 'brown', 'red', 'orange', 'yellow', 'green', 'blue', 'violet', 'grey', 'white']
-
-export const colorCode = (color: string):number => {
-let code = COLORS.indexOf(color)
-  return code;
+// Definición del enum ResistorValues
+export enum ResistorValues {
+  black = 0,
+  brown = 1,
+  red = 2,
+  orange = 3,
+  yellow = 4,
+  green = 5,
+  blue = 6,
+  violet = 7,
+  grey = 8,
+  white = 9,
 }
 
-// Ejemplo de uso
-console.log(ResistorColor.decodedValue(["brown", "green"])); // Salida esperada: 15
+// Definición del tipo Color
+type Color = keyof typeof ResistorValues;
+
+// Función decodedResistorValue que decodifica los valores de resistencia
+export function decodedResistorValue(colors: Color[]): string {
+  // Se calcula el valor principal concatenando los valores correspondientes a los dos primeros colores
+  const mainValue = `${ResistorValues[colors[0]]}${ResistorValues[colors[1]]}`;
+  // Se calcula la cantidad de ceros multiplicando 10 por el valor numérico correspondiente al tercer color
+  const zeros = 10 ** ResistorValues[colors[2]];
+  // Se multiplica el valor principal por la cantidad de ceros para obtener el valor de la resistencia en ohms
+  const valueInOhms = Number(mainValue) * zeros;
+
+  // Se determina el prefijo para indicar la magnitud del valor en ohms
+  if (valueInOhms >= 1e9) {
+    return `${valueInOhms / 1e9} gigaohms`;
+  } else if (valueInOhms >= 1e6) {
+    return `${valueInOhms / 1e6} megaohms`;
+  } else if (valueInOhms >= 1e3) {
+    return `${valueInOhms / 1e3} kiloohms`;
+  } else {
+    return `${valueInOhms} ohms`;
+  }
+}
+```
+
+Esta solución proporciona una manera eficaz de decodificar los valores de resistencia para resistores de tres bandas de colores, utilizando el enum `ResistorValues` para mapear los colores a sus valores numéricos correspondientes. La función `decodedResistorValue` toma tres colores como entrada y devuelve la resistencia en ohms como una cadena de texto.

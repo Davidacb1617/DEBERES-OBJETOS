@@ -1,27 +1,44 @@
-# Solución al problema Two Fer
+# Solución al problema Resistor Color Duo
 
-Este ejercicio implica la creación de una función que genera una frase en la que se reparte algo entre dos personas.
+Este ejercicio implica la creación de una función que decodifica los valores de resistencia de un resistor de dos bandas, dadas las dos bandas de colores como entrada.
 
 ## Enfoque
 
-1. **Manejo de entradas**: La función debe manejar dos casos: cuando se proporciona un nombre y cuando no se proporciona ninguno. En el primer caso, el nombre proporcionado se incluirá en la frase. En el segundo caso, se usará un nombre genérico.
+1. **Definición de colores y valores de resistencia**: Se define un enum que asigna valores numéricos a los colores de las bandas de un resistor.
 
-2. **Construcción de la frase**: La función debe generar una frase que siga un patrón específico, donde se incluya el nombre proporcionado (o un nombre genérico) y la frase indique que una cosa es para el nombre proporcionado y otra cosa es para el que llama a la función.
+2. **Decodificación de valores**: La función `decodedValue` toma un array de dos colores como entrada y devuelve el valor de resistencia correspondiente como un número.
 
 ## Solución
 
-Aquí se muestra una posible Solución en TypeScript:
+Aquí se muestra una posible solución en TypeScript:
 
 ```typescript
-export function twoFer(buyer: string): string {
-    if (buyer) {
-        return "One for " + buyer + ", one for me.";
-    } else {
-        return "One for you, one for me.";
-    }
+// Definición del enum ResistorValues
+export enum ResistorValues {
+  black = 0,
+  brown = 1,
+  red = 2,
+  orange = 3,
+  yellow = 4,
+  green = 5,
+  blue = 6,
+  violet = 7,
+  grey = 8,
+  white = 9,
+}
+
+// Definición del tipo Color
+type Color = keyof typeof ResistorValues;
+
+// Función decodedValue que decodifica los valores de resistencia
+export function decodedValue([firstColor, secondColor]: Color[]) {
+  // Utiliza las claves del enum ResistorValues para obtener los valores correspondientes y los concatena como una cadena
+  // Luego convierte la cadena en un número y lo devuelve
+  return Number(`${ResistorValues[firstColor]}${ResistorValues[secondColor]}`);
 }
 
 // Ejemplo de uso
-console.log(twoFer("Alice")); // Salida esperada: "One for Alice, one for me."
-console.log(twoFer("Bob")); // Salida esperada: "One for Bob, one for me."
-console.log(twoFer("")); // Salida esperada: "One for you, one for me."
+console.log(decodedValue(['brown', 'black'])); // Salida esperada: 10
+console.log(decodedValue(['yellow', 'violet'])); // Salida esperada: 47
+console.log(decodedValue(['red', 'orange'])); // Salida esperada: 23
+```
