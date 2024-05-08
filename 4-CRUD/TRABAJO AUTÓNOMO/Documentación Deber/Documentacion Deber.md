@@ -118,7 +118,7 @@ Se integra Swagger para documentar la API y permitir a los desarrolladores visua
 Para generar un recurso con Prisma, se utiliza el siguiente comando:
 
 ```bash
-npx prisma generate resource creatures
+npx nest generate resource creatures
 ```
 
 Este comando generará los modelos, servicios y controladores necesarios para interactuar con la tabla `creatures` en la base de datos.
