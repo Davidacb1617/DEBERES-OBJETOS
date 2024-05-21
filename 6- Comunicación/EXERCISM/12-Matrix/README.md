@@ -26,7 +26,6 @@ export class Matrix {
 
   /**
    * Constructor de la clase Matrix.
-   * @param input La cadena de texto que representa la matriz.
    */
   constructor(input: string) {
     this.input = input;
@@ -34,16 +33,14 @@ export class Matrix {
 
   /**
    * Obtiene las filas de la matriz como un arreglo bidimensional de números.
-   * @returns Un arreglo bidimensional donde cada subarreglo representa una fila de la matriz.
    */
   get rows(): number[][] {
     return this.input.split('\n').map((row) => row.split(' ').map(Number));
   }
-
   /**
    * Obtiene las columnas de la matriz como un arreglo bidimensional de números.
-   * @returns Un arreglo bidimensional donde cada subarreglo representa una columna de la matriz.
    */
+
   get columns(): number[][] {
     let matrix = this.rows;
     let cols: number[][] = [];

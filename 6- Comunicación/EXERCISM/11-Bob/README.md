@@ -10,6 +10,7 @@ Bob responde a mensajes de diferentes maneras según ciertos patrones en el mens
 2. **Respuesta a Mensajes Gritados**: Si el mensaje contiene letras en mayúscula y todas las letras son mayúsculas (lo que indica que Bob está siendo gritado), él responde con "Whoa, chill out!".
 3. **Respuesta a Preguntas**: Si el mensaje termina con un signo de interrogación y no es gritado, Bob responde con "Sure.".
 4. **Respuesta por Defecto**: Para cualquier otro tipo de mensaje, Bob responde con "Whatever.".
+5. **Respuesta a Pregunta Gritada**: Para cualquier mensaje con signo de interrogación y en mayusculas, Bob responde con "Calm down, I know what I´m doing!"
 
 ## Enfoque de la Solución
 
@@ -20,8 +21,6 @@ La función `hey(message: string): string` implementa la lógica para determinar
 ```typescript
 /**
  * Simula las respuestas de Bob basadas en el mensaje recibido.
- * @param message El mensaje recibido.
- * @returns La respuesta de Bob según el tipo de mensaje.
  */
 export function hey(message: string): string {
   if (hearsBoring(message)) {
@@ -41,8 +40,6 @@ export function hey(message: string): string {
 
 /**
  * Verifica si el mensaje es vacío o aburrido.
- * @param speech El mensaje recibido.
- * @returns Devuelve true si el mensaje es vacío o contiene solo espacios.
  */
 const hearsBoring = (speech: string): boolean => {
   return speech.length === 0 || /^\s*$/.test(speech);
@@ -50,8 +47,6 @@ const hearsBoring = (speech: string): boolean => {
 
 /**
  * Verifica si el mensaje está siendo gritado.
- * @param speech El mensaje recibido.
- * @returns Devuelve true si el mensaje contiene solo letras en mayúscula.
  */
 const hearsFreaky = (speech: string): boolean => {
   return /[A-Z]/.test(speech) && speech === speech.toUpperCase();
@@ -59,8 +54,6 @@ const hearsFreaky = (speech: string): boolean => {
 
 /**
  * Verifica si el mensaje es una pregunta.
- * @param speech El mensaje recibido.
- * @returns Devuelve true si el mensaje termina con un signo de interrogación.
  */
 const hearsInquisitive = (speech: string): boolean => {
   return speech.endsWith('?');
