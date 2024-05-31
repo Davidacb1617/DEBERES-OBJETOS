@@ -1,6 +1,6 @@
 <h1>Employees</h1>
 
-<form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+<form nz-form [formGroup]="validateForm" (ngSubmit)="submitFormEmployee()">
   <nz-form-item>
     <nz-form-label [nzSpan]="7" nzRequired>First Name</nz-form-label>
     <nz-form-control [nzSpan]="12">
@@ -34,13 +34,20 @@
   <nz-form-item>
     <nz-form-label [nzSpan]="7" nzRequired>Salary</nz-form-label>
     <nz-form-control [nzSpan]="12">
-<nz-input-number formControlName="salary" [nzMin]="0" [nzMax]="100000" [nzStep]="100"></nz-input-number>
+      <nz-input-number
+        formControlName="salary"
+        [nzMin]="0"
+        [nzMax]="100000"
+        [nzStep]="100"
+      ></nz-input-number>
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-control [nzXs]="{ span: 24, offset: 0 }" [nzSm]="{ span: 16, offset: 8 }">
+    <nz-form-control
+      [nzXs]="{ span: 24, offset: 0 }"
+      [nzSm]="{ span: 16, offset: 8 }"
+    >
       <button nz-button nzType="primary">Submit</button>
     </nz-form-control>
   </nz-form-item>
-
 </form>
