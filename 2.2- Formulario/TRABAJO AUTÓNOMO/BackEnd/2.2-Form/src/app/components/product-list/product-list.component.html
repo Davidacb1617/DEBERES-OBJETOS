@@ -1,0 +1,38 @@
+<h1>Product List</h1>
+<nz-table
+  #basicTable
+  [nzData]="products"
+  [nzBordered]="true"
+  [nzSize]="'middle'"
+>
+  <thead>
+    <tr>
+      <th nzWidth="25%">Product Name</th>
+      <th nzWidth="35%">Description</th>
+      <th nzWidth="10%">Quantity in Stock</th>
+      <th nzWidth="10%">Unit Price</th>
+      <th nzWidth="20%">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let product of basicTable.data">
+      <td>{{ product.productName }}</td>
+      <td>{{ product.description }}</td>
+      <td>{{ product.quantityInStock }}</td>
+      <td>{{ product.unitPrice }}</td>
+      <td>
+        <button nz-button nzType="default" (click)="selectProduct(product)">
+          Edit
+        </button>
+        <button
+          nz-button
+          nzType="default"
+          nzDanger
+          (click)="deleteProduct(product.id)"
+        >
+          Delete
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>

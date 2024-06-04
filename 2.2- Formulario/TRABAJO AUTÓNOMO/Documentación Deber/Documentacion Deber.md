@@ -1,14 +1,13 @@
-# Comunicación entre Componentes Padre e Hijo en Angular con @Input y @Output
+# Formularios en Angular con Ng-zorro
 
-Este documento proporciona una descripción detallada sobre cómo manejar la comunicación entre componentes padre e hijo en Angular utilizando los decoradores `@Input()` y `@Output()`.
+## ¿Qué es Ng-zorro?
 
-## ¿Qué son @Input y @Output?
-
-En Angular, `@Input()` y `@Output()` son decoradores que se utilizan para gestionar el flujo de datos entre componentes. `@Input()` permite que un componente padre pase datos a un componente hijo, mientras que `@Output()` permite que un componente hijo emita eventos que pueden ser escuchados y manejados por un componente padre.
+Ng-zorro es una biblioteca de componentes UI para Angular basada en el popular framework de diseño Ant Design. Proporciona un conjunto rico de componentes reutilizables que se pueden integrar fácilmente en aplicaciones Angular.
 
 ## Tecnologías Utilizadas
 
 - **Angular**: Un framework para la construcción de aplicaciones web dinámicas y escalables.
+- **Ng-zorro**: Una biblioteca de componentes UI basada en Ant Design para Angular.
 
 ## Antes de Comenzar
 
@@ -20,459 +19,321 @@ En Angular, `@Input()` y `@Output()` son decoradores que se utilizan para gestio
 npm install -g @angular/cli
 ```
 
-- Levantar la aplicación en el puerto `localhost:4200`
+### Crear un Proyecto Angular
+
+- Crea un nuevo proyecto Angular usando Angular CLI:
+
+```bash
+ng new angular-ng-zorro-forms
+cd angular-ng-zorro-forms
+```
+
+### Instalar Ng-zorro
+
+- Instala Ng-zorro en tu proyecto:
+
+```bash
+ng add ng-zorro-antd
+```
+
+### Levantar la Aplicación
+
+- Levanta la aplicación en el puerto `localhost:4200`:
 
 ```bash
 ng serve -o
 ```
 
-- Crear componente padre
+## Configuración del Proyecto
 
-```bash
-ng g c father
-```
+### Importar Modulo de Formularios y Ng-zorro
 
-- Crear componente Hijo
-
-```bash
-ng g c child
-```
-
-## Estructura del Proyecto
-
-El proyecto tendrá la siguiente estructura para ilustrar la comunicación entre un componente padre e hijo:
-
-```
-src/
-├── app/
-│   ├── child/
-│   │   ├── child.component.ts
-│   │   ├── child.component.html
-│   │   ├── child.component.css
-│   ├── father/
-│   │   ├── father.component.ts
-│   │   ├── father.component.html
-│   │   ├── father.component.css
-│   ├── app.module.ts
-│   ├── app.component.ts
-│   ├── app.component.html
-```
-
-## Implementación de @Input
-
-### Definición de @Input en el Componente Hijo
-
-El decorador `@Input()` se utiliza para definir una propiedad en el componente hijo que puede recibir datos desde el componente padre.
+Asegúrate de importar los módulos necesarios en `app.module.ts`:
 
 ```typescript
-// child.component.ts
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzCardModule } from 'ng-zorro-antd/card';
+import { AppComponent } from './app.component';
 
-@Component({
-  selector: 'app-child',
-  standalone: true,
-  imports: [CommonModule, NzButtonModule, NzCardModule],
-  templateUrl: './child.component.html',
-  styleUrls: ['./child.component.css'],
-})
-export class ChildComponent {
-  @Input() parentMessageInput: string = String();
-  @Output() childMessageEventOutput = new EventEmitter<string>();
-  parentMessageViewChild = String();
-
-  sendMessage() {
-    this.childMessageEventOutput.emit('Jefe, los iphone 13 están listos');
-  }
-}
-```
-
-En este ejemplo, `parentMessageInput` es una propiedad de entrada que puede recibir un valor del componente padre.
-
-### Enlace de Datos desde el Componente Padre
-
-El componente padre pasa un valor a la propiedad de entrada del componente hijo utilizando binding de propiedad.
-
-```typescript
-// father.component.ts
-import {
-  Component,
-  AfterContentInit,
-  ContentChild,
-  ElementRef,
-  ViewChild,
-  AfterViewInit,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzCardModule } from 'ng-zorro-antd/card';
-import { ChildComponent } from '../child/child.component';
-
-@Component({
-  selector: 'app-father',
-  standalone: true,
+@NgModule({
+  declarations: [AppComponent],
   imports: [
-    CommonModule,
+    BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    NzFormModule,
+    NzInputModule,
     NzButtonModule,
-    NzCardModule,
-    ChildComponent,
   ],
-  templateUrl: './father.component.html',
-  styleUrls: ['./father.component.css'],
+  providers: [],
+  bootstrap: [AppComponent],
 })
-export class FatherComponent implements AfterViewInit, AfterContentInit {
-  parentMessageInput =
-    'Quiero que estén listos los iphone 13 para el lanzamiento de la nueva versión de la app de mensajería instantánea';
-  childMessageEventOutput = '';
+export class AppModule {}
+```
 
-  @ViewChild(ChildComponent) childComponent!: ChildComponent;
-  @ContentChild('projectedContent', { static: true })
-  projectedContent!: ElementRef;
+## Crear Formulario Reactivo
 
-  receiveMessage($event: string) {
-    this.childMessageEventOutput = $event;
-  }
+### Definir el Formulario en el Componente
 
-  ngAfterViewInit() {
-    Promise.resolve().then(() => {
-      this.childComponent.parentMessageViewChild =
-        'El jefe revisa que los empleados estén trabajando en los iphone 13';
+En el componente principal `app.component.ts`, define el formulario reactivo:
+
+```typescript
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+})
+export class AppComponent {
+  validateForm: FormGroup;
+
+  constructor(private fb: FormBuilder) {
+    this.validateForm = this.fb.group({
+      userName: [null, [Validators.required]],
+      email: [null, [Validators.email, Validators.required]],
+      password: [null, [Validators.required]],
     });
   }
 
-  ngAfterContentInit() {
-    if (this.projectedContent) {
-      console.log(
-        'El contenido proyectado es:',
-        this.projectedContent.nativeElement.textContent
-      );
+  submitForm(): void {
+    if (this.validateForm.valid) {
+      console.log('submit', this.validateForm.value);
+    } else {
+      Object.values(this.validateForm.controls).forEach((control) => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
     }
   }
 }
 ```
 
+### Diseñar el Formulario en la Plantilla
+
+En `app.component.html`, diseña el formulario utilizando los componentes de Ng-zorro:
+
 ```html
-<!-- father.component.html -->
-<div style="padding: 20px">
-  <h1>Apple</h1>
-  <nz-card nzTitle="Jefe de Apple 👨‍🦰:">
-    <div class="borderVariables">
-      <div>Variable del Padre:</div>
-      <div>{{ parentMessageInput }}</div>
-      <div>{{ childMessageEventOutput }}</div>
-    </div>
-    <div class="border">
-      Hijo usando &#64;Output:
-      <h3>{{ childMessageEventOutput }}</h3>
-    </div>
-    <app-child
-      [parentMessageInput]="parentMessageInput"
-      (childMessageEventOutput)="receiveMessage($event)"
+<form
+  nz-form
+  [formGroup]="validateForm"
+  (ngSubmit)="submitForm()"
+>
+  <nz-form-item>
+    <nz-form-label
+      [nzFor]="'userName'"
+      nzRequired
+      >Nombre de Usuario</nz-form-label
     >
-      <div class="border">
-        Padre usando &#64;ContentChild:
-        <h3>Por aquí el jefe de la empresa se comunica con el empleado</h3>
-      </div>
-    </app-child>
-  </nz-card>
-</div>
-```
+    <nz-form-control nzErrorTip="Por favor ingrese su nombre de usuario">
+      <input
+        nz-input
+        formControlName="userName"
+        id="'userName'"
+      />
+    </nz-form-control>
+  </nz-form-item>
 
-En este ejemplo, `parentMessageInput` es una propiedad del componente padre que se enlaza a `parentMessageInput` del componente hijo.
-
-## Implementación de @Output
-
-### Definición de @Output en el Componente Hijo
-
-El decorador `@Output()` se utiliza para definir una propiedad de evento en el componente hijo que puede emitir eventos al componente padre.
-
-```typescript
-// child.component.ts
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzCardModule } from 'ng-zorro-antd/card';
-
-@Component({
-  selector: 'app-child',
-  standalone: true,
-  imports: [CommonModule, NzButtonModule, NzCardModule],
-  templateUrl: './child.component.html',
-  styleUrls: ['./child.component.css'],
-})
-export class ChildComponent {
-  @Input() parentMessageInput: string = String();
-  @Output() childMessageEventOutput = new EventEmitter<string>();
-  parentMessageViewChild = String();
-
-  sendMessage() {
-    this.childMessageEventOutput.emit('Jefe, los iphone 13 están listos');
-  }
-}
-```
-
-En este ejemplo, `childMessageEventOutput` es una propiedad de evento que emite un mensaje cuando se llama a `sendMessage`.
-
-### Manejo del Evento en el Componente Padre
-
-El componente padre escucha el evento emitido por el componente hijo y define una función para manejarlo.
-
-```html
-<!-- father.component.html -->
-<div style="padding: 20px">
-  <h1>Apple</h1>
-  <nz-card nzTitle="Jefe de Apple 👨‍🦰:">
-    <div class="borderVariables">
-      <div>Variable del Padre:</div>
-      <div>{{ parentMessageInput }}</div>
-      <div>{{ childMessageEventOutput }}</div>
-    </div>
-    <div class="border">
-      Hijo usando &#64;Output:
-      <h3>{{ childMessageEventOutput }}</h3>
-    </div>
-    <app-child
-      [parentMessageInput]="parentMessageInput"
-      (childMessageEventOutput)="receiveMessage($event)"
+  <nz-form-item>
+    <nz-form-label
+      [nzFor]="'email'"
+      nzRequired
+      >Email</nz-form-label
     >
-      <div class="border">
-        Padre usando &#64;ContentChild:
-        <h3>Por aquí el jefe de la empresa se comunica con el empleado</h3>
-      </div>
-    </app-child>
-  </nz-card>
-</div>
-```
+    <nz-form-control nzErrorTip="Por favor ingrese un email válido">
+      <input
+        nz-input
+        formControlName="email"
+        id="'email'"
+      />
+    </nz-form-control>
+  </nz-form-item>
 
-```typescript
-// father.component.ts
-import {
-  Component,
-  AfterContentInit,
-  ContentChild,
-  ElementRef,
-  ViewChild,
-  AfterViewInit,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzCardModule } from 'ng-zorro-antd/card';
-import { ChildComponent } from '../child/child.component';
-
-@Component({
-  selector: 'app-father',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    NzButtonModule,
-    NzCardModule,
-    ChildComponent,
-  ],
-  templateUrl: './father.component.html',
-  styleUrls: ['./father.component.css'],
-})
-export class FatherComponent implements AfterViewInit, AfterContentInit {
-  parentMessageInput =
-    'Quiero que estén listos los iphone 13 para el lanzamiento de la nueva versión de la app de mensajería instantánea';
-  childMessageEventOutput = '';
-
-  @ViewChild(ChildComponent) childComponent!: ChildComponent;
-  @ContentChild('projectedContent', { static: true })
-  projectedContent!: ElementRef;
-
-  receiveMessage($event: string) {
-    this.childMessageEventOutput = $event;
-  }
-
-  ngAfterViewInit() {
-    Promise.resolve().then(() => {
-      this.childComponent.parentMessageViewChild =
-        'El jefe revisa que los empleados estén trabajando en los iphone 13';
-    });
-  }
-
-  ngAfterContentInit() {
-    if (this.projectedContent) {
-      console.log(
-        'El contenido proyectado es:',
-        this.projectedContent.nativeElement.textContent
-      );
-    }
-  }
-}
-```
-
-En este ejemplo, cuando el componente hijo emite el evento `childMessageEventOutput`, el componente padre llama a la función `receiveMessage`, pasando el mensaje como argumento a través de `$event`.
-
-## Descripción de Métodos
-
-- **@Input()**: Marca una propiedad en el componente hijo como una propiedad de entrada que puede recibir datos del componente padre.
-- **@Output()**: Marca una propiedad en el componente hijo como una propiedad de evento que puede emitir eventos manejados por el componente padre.
-- **sendMessage()**: Emite un evento personalizado desde el componente hijo.
-- **receiveMessage()**: Maneja el evento emitido por el componente hijo en el componente padre.
-
-## Código Completo
-
-### Componente Padre (Father)
-
-**HTML (father.component.html)**:
-
-```html
-<div style="padding: 20px">
-  <h1>Apple</h1>
-  <nz-card nzTitle="Jefe de Apple 👨‍🦰:">
-    <div class="borderVariables">
-      <div>Variable del Padre:</div>
-      <div>{{ parentMessageInput }}</div>
-      <div>{{ childMessageEventOutput }}</div>
-    </div>
-    <div class="border">
-      Hijo usando &#64;Output:
-      <h3>{{ childMessageEventOutput }}</h3>
-    </div>
-    <app-child
-      [parentMessageInput]="parentMessageInput"
-      (childMessageEventOutput)="receiveMessage($event)"
+  <nz-form-item>
+    <nz-form-label
+      [nzFor]="'password'"
+      nzRequired
+      >Contraseña</nz-form-label
     >
-      <div class="border">
-        Padre usando &#64;ContentChild:
-        <h3>Por aquí el jefe de la empresa se comunica con el empleado</h3>
-      </div>
-    </app-child>
-  </nz-card>
-</div>
+    <nz-form-control nzErrorTip="Por favor ingrese su contraseña">
+      <input
+        nz-input
+        type="password"
+        formControlName="password"
+        id="'password'"
+      />
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control>
+      <button
+        nz-button
+        nzType="primary"
+      >
+        Enviar
+      </button>
+    </nz-form-control>
+  </nz-form-item>
+</form>
 ```
 
-**TypeScript (father.component.ts)**:
+## Validación y Mensajes de Error
 
-```typescript
-import {
-  Component,
-  AfterContentInit,
-  ContentChild,
-  ElementRef,
-  ViewChild,
-  AfterViewInit,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzCardModule } from 'ng-zorro-antd/card';
-import { ChildComponent } from '../child/child.component';
-
-@Component({
-  selector: 'app-father',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    NzButtonModule,
-    NzCardModule,
-    ChildComponent,
-  ],
-  templateUrl: './father.component.html',
-  styleUrls: ['./father.component.css'],
-})
-export class FatherComponent implements AfterViewInit, AfterContentInit {
-  parentMessageInput =
-    'Quiero que estén listos los iphone 13 para el lanzamiento de la nueva versión de la app de mensajería instantánea';
-  childMessageEventOutput = '';
-
-  @ViewChild(ChildComponent) childComponent!: ChildComponent;
-  @ContentChild('projectedContent', { static: true })
-  projectedContent!: ElementRef;
-
-  receiveMessage($event: string) {
-    this.childMessageEventOutput = $event;
-  }
-
-  ngAfterViewInit() {
-    Promise.resolve().then(() => {
-      this.childComponent.parentMessageViewChild =
-        'El jefe revisa que los empleados estén trabajando en los iphone 13';
-    });
-  }
-
-  ngAfterContentInit() {
-    if (this.projectedContent) {
-      console.log(
-        'El contenido proyectado es:',
-        this.projectedContent.nativeElement.textContent
-      );
-    }
-  }
-}
-```
-
-### Componente Hijo (Child)
-
-**HTML (child.component.html)**:
-
-```html
-<div style="padding: 20px; box-shadow: 2px 10px 30px #888888">
-  <nz-card nzTitle="Empleado de Apple 🙋‍♂️:">
-    <div class="borderVariables">
-      <div>Variables del Hijo:</div>
-      <div>{{ parentMessageInput }}</div>
-      <div>{{ childMessageEventOutput }}</div>
-      <div>{{ parentMessageViewChild }}</div>
-    </div>
-    <div class="border">
-      Padre usando &#64;Input:
-      <h3>{{ parentMessageInput }}</h3>
-    </div>
-    <div class="border">
-      Padre usando &#64;ViewChild:
-      <h3>{{ parentMessageViewChild }}</h3>
-    </div>
-
-    <ng-content></ng-content>
-  </nz-card>
-  <button
-    nz-button
-    nzType="primary"
-    (click)="sendMessage()"
-  >
-    Enviar Mensaje al Jefe
-  </button>
-</div>
-```
-
-**TypeScript (child.component.ts)**:
-
-```typescript
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzCardModule } from 'ng-zorro-antd/card';
-
-@Component({
-  selector: 'app-child',
-  standalone: true,
-  imports: [CommonModule, NzButtonModule, NzCardModule],
-  templateUrl: './child.component.html',
-  styleUrls: ['./child.component.css'],
-})
-export class ChildComponent {
-  @Input() parentMessageInput: string = String();
-  @Output() childMessageEventOutput = new EventEmitter<string>();
-  parentMessageViewChild = String();
-
-  sendMessage() {
-    this.childMessageEventOutput.emit('Jefe, los iphone 13 están listos');
-  }
-}
-```
+Ng-zorro facilita la validación de formularios y la visualización de mensajes de error. En el ejemplo anterior, los mensajes de error se configuran utilizando el atributo `nzErrorTip` en `nz-form-control`.
 
 ## Resumen de Funcionalidad
 
-- **@Input()**: Se utiliza para pasar datos desde un componente padre a un componente hijo.
-- **@Output()**: Se utiliza para emitir eventos desde un componente hijo a un componente padre.
-- **sendMessage()**: Emite un evento personalizado desde el componente hijo.
-- **receiveMessage()**: Maneja el evento emitido por el componente hijo en el componente padre.
+- **Formulario Reactivo**: Utiliza `FormBuilder` para crear un formulario reactivo con validaciones.
+- **Componente de Formulario de Ng-zorro**: Utiliza componentes como `nz-form`, `nz-input` y `nz-button` para construir el formulario.
+- **Validación**: Implementa validaciones y muestra mensajes de error usando `nzErrorTip`.
+
+## Código Completo
+
+### Componente Principal (App)
+
+**HTML (app.component.html)**:
+
+```html
+<form
+  nz-form
+  [formGroup]="validateForm"
+  (ngSubmit)="submitForm()"
+>
+  <nz-form-item>
+    <nz-form-label
+      [nzFor]="'userName'"
+      nzRequired
+      >Nombre de Usuario</nz-form-label
+    >
+    <nz-form-control nzErrorTip="Por favor ingrese su nombre de usuario">
+      <input
+        nz-input
+        formControlName="userName"
+        id="'userName'"
+      />
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label
+      [nzFor]="'email'"
+      nzRequired
+      >Email</nz-form-label
+    >
+    <nz-form-control nzErrorTip="Por favor ingrese un email válido">
+      <input
+        nz-input
+        formControlName="email"
+        id="'email'"
+      />
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label
+      [nzFor]="'password'"
+      nzRequired
+      >Contraseña</nz-form-label
+    >
+    <nz-form-control nzErrorTip="Por favor ingrese su contraseña">
+      <input
+        nz-input
+        type="password"
+        formControlName="password"
+        id="'password'"
+      />
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control>
+      <button
+        nz-button
+        nzType="primary"
+      >
+        Enviar
+      </button>
+    </nz-form-control>
+  </nz-form-item>
+</form>
+```
+
+**TypeScript (app.component.ts)**:
+
+```typescript
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+})
+export class AppComponent {
+  validateForm: FormGroup;
+
+  constructor(private fb: FormBuilder) {
+    this.validateForm = this.fb.group({
+      userName: [null, [Validators.required]],
+      email: [null, [Validators.email, Validators.required]],
+      password: [null, [Validators.required]],
+    });
+  }
+
+  submitForm(): void {
+    if (this.validateForm.valid) {
+      console.log('submit', this.validateForm.value);
+    } else {
+      Object.values(this.validateForm.controls).forEach((control) => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+    }
+  }
+}
+```
+
+**Módulo Principal (app.module.ts)**:
+
+```typescript
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    NzFormModule,
+    NzInputModule,
+    NzButtonModule,
+  ],
+  providers: [],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+```
+
+## Conclusión
+
+Ng-zorro facilita la creación de formularios en Angular con componentes estilizados y funcionales. Utilizando los módulos y componentes proporcionados por Ng-zorro, puedes construir formularios interactivos y validaciones eficientes en tus aplicaciones Angular.
