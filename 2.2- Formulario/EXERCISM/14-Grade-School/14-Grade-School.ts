@@ -38,3 +38,11 @@ export class GradeSchool {
     return (this.students[grade] || []).slice();
   }
 }
+const school = new GradeSchool();
+
+school.add('Anna', 2);
+school.add('Barbara', 1);
+school.add('Charlie', 2);
+school.add('David', 1);
+
+console.log(school.roster());

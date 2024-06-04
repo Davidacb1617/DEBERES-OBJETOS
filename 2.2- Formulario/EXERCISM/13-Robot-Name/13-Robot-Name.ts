@@ -39,3 +39,8 @@ export class Robot {
     this._reservedNames.clear();
   }
 }
+
+const robot1 = new Robot();
+console.log(robot1.name);
+robot1.resetName();
+console.log(robot1.name);

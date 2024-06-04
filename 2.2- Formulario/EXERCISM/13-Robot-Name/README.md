@@ -40,7 +40,7 @@ export class Robot {
 
   /**
    * Propiedad para obtener el nombre actual del robot.
-   * @returns El nombre actual del robot.
+   * retorna el nombre actual del robot.
    */
   public get name(): string {
     return this._name;
@@ -48,7 +48,7 @@ export class Robot {
 
   /**
    * Genera un nombre único para el robot, asegurándose de que no esté reservado.
-   * @returns El nombre generado para el robot.
+   * retorna el nombre generado para el robot.
    */
   generateName(): string {
     let randomName: string;
@@ -61,7 +61,7 @@ export class Robot {
 
   /**
    * Genera un nombre aleatorio para el robot.
-   * @returns Un nombre aleatorio válido para el robot (dos letras seguidas de tres dígitos).
+   * retorna un nombre aleatorio válido para el robot (dos letras seguidas de tres dígitos).
    */
   randomName(): string {
     let name = '';

@@ -43,7 +43,7 @@ export class GradeSchool {
 
   /**
    * Devuelve el roster completo de la escuela, organizado por grados y ordenado alfabéticamente por nombre.
-   * @returns Un objeto donde cada clave es el número de grado y el valor es un arreglo de nombres de estudiantes.
+   * retorna un objeto donde cada clave es el número de grado y el valor es un arreglo de nombres de estudiantes.
    */
   roster(): Students {
     let newRoster: Students = {};
@@ -55,8 +55,8 @@ export class GradeSchool {
 
   /**
    * Agrega un estudiante al grado especificado.
-   * @param name El nombre del estudiante a agregar.
-   * @param grade El número de grado donde se agregará el estudiante.
+   * name = El nombre del estudiante a agregar.
+   * grade = El número de grado donde se agregará el estudiante.
    */
   add(name: string, grade: number) {
     this.removeStudent(name); // Elimina al estudiante de todos los grados antes de agregarlo nuevamente
@@ -68,7 +68,7 @@ export class GradeSchool {
 
   /**
    * Elimina un estudiante de todos los grados donde esté presente.
-   * @param name El nombre del estudiante a eliminar.
+   * name = El nombre del estudiante a eliminar.
    */
   removeStudent(name: string) {
     for (const grade in this.students) {
@@ -80,8 +80,8 @@ export class GradeSchool {
 
   /**
    * Devuelve un arreglo de nombres de estudiantes para un grado específico.
-   * @param grade El número de grado del cual se desea obtener la lista de estudiantes.
-   * @returns Un arreglo de nombres de estudiantes ordenados alfabéticamente.
+   * grade = El número de grado del cual se desea obtener la lista de estudiantes.
+   * retorna un arreglo de nombres de estudiantes ordenados alfabéticamente.
    */
   grade(grade: number): string[] {
     return (this.students[grade] || []).slice().sort();
