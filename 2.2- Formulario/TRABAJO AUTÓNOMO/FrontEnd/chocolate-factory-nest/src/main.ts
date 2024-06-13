@@ -9,7 +9,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   app.enableCors({
-    origin: 'http://localhost:4200',
+    origin: 'http://localhost:55766',
   });
 
   // Global Exception Filter
